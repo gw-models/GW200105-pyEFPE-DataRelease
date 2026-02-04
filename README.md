@@ -12,24 +12,19 @@ without including full bilby internals.
 ## HDF5 File Structure
 
 Each file contains the following groups:
-
+```
 /posterior                 # Posterior samples
-
 param1[nsamples]
-
 param2[nsamples]
-
 ...
 
 /priors                    # Priors as HDF5 attributes
-
 param1
-
 param2
-
 ...
 
 /meta                      # Metadata as HDF5 attributes
+```
 
 ### Parameter Definitions
 
@@ -54,7 +49,32 @@ param2
 | log_likelihood | Log‑likelihood value associated with each posterior sample |
 
 
-## Citation
+### Loading HDF5 file
+
+Python + pandas example:
+
+```python
+import pandas as pd
+import h5py
+
+with h5py.File("posterior_GW200105_340Hz.h5", "r") as f:
+    # Posterior table
+    posterior = {p: f["posterior"][p][()] for p in f["posterior"].keys()}
+    df = pd.DataFrame(posterior)
+
+    # Priors
+    priors = {p: dict(f["priors"][p].attrs) for p in f["priors"].keys()}
+
+    # Metadata
+    meta = dict(f["meta"].attrs)
+
+print(df.head())
+print(priors)
+print(meta)
+```
+
+
+## Attribution
 If you use these data, please cite:
 1. This Zenodo dataset using the DOI from the Zenodo landing page.
 2. The associated paper: Gonzalo Morras, Geraint Pratten, Patricia Schmidt, _Orbital eccentricity in a neutron star - black hole merger_ https://doi.org/10.48550/arXiv.2503.15393
